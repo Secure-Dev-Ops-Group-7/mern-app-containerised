@@ -1,2 +1,7 @@
 node_modules
-.env
+.envkubectl
+minikube-linux-amd64
+kubectl
+minikube-linux-amd64
+kubectl
+minikube-linux-amd64
