@@ -1,9 +1,10 @@
-version: '3.8'
 services:
   frontend:
     build: ./client
     ports:
       - "3000:3000"
+    environment:
+      - REACT_APP_YOUR_HOSTNAME=/api
     depends_on:
       - backend
     networks:
@@ -16,7 +17,7 @@ services:
     depends_on:
       - mongo
     environment:
-      - MONGO_URI=mongodb://mongo:27017/mydatabase
+      - MONGO_URI=mongodb://mongo:27017/employees
     networks:
       - mern-network
 
@@ -27,10 +28,22 @@ services:
     networks:
       - mern-network
 
+  mongo-express:
+    image: mongo-express
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mongo
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongo
+    networks:
+      - mern-network
+
   nginx:
     build: ./nginx
     ports:
       - "80:80"
+      - "443:443"
     depends_on:
       - frontend
       - backend
