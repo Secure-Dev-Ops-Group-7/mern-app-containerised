@@ -36,8 +36,6 @@ The application is split across five containers that communicate over a shared i
 
 The frontend communicates with the backend via Nginx (`/api` proxy pass). The backend connects to MongoDB using the `MONGO_URI` environment variable. Nginx handles all external traffic and terminates SSL.
 
-ADD SCREENSHOT HERE — architecture diagram showing container relationships
-
 ---
 
 ## Tech Stack
@@ -123,7 +121,7 @@ docker compose up --build -d
 docker compose ps
 ```
 
-![My picture](https://raw.githubusercontent.com/Secure-Dev-Ops-Group-7/mern-app-containerised/main/images/Screenshot2.png) — terminal output of `docker compose ps` showing all 5 containers running
+![5 containers](https://raw.githubusercontent.com/Secure-Dev-Ops-Group-7/mern-app-containerised/main/images/Screenshot2.png) — terminal output of `docker compose ps` showing all 5 containers running
 
 ### View logs
 
@@ -131,7 +129,7 @@ docker compose ps
 docker compose logs -f
 ```
 
-ADD SCREENSHOT HERE — log output showing containers started and MongoDB connected successfully
+![log files](https://raw.githubusercontent.com/Secure-Dev-Ops-Group-7/mern-app-containerised/main/images/Screenshot5.png) — log output showing containers started and MongoDB connected successfully
 
 ### Stop containers
 
@@ -197,9 +195,9 @@ Once running (Docker Compose or Kubernetes), the application is accessible at:
 
 > Your browser will show a security warning for the self-signed certificate — this is expected. Proceed past it.
 
-ADD SCREENSHOT HERE — browser showing the React frontend loaded via HTTPS (full URL visible in address bar)
+![log files](https://raw.githubusercontent.com/Secure-Dev-Ops-Group-7/mern-app-containerised/main/images/Screenshot4.png) — browser showing the React frontend loaded via HTTPS (full URL visible in address bar)
 
-ADD SCREENSHOT HERE — browser showing Mongo Express interface (full URL visible in address bar)
+![log mongo](https://raw.githubusercontent.com/Secure-Dev-Ops-Group-7/mern-app-containerised/main/images/Screenshot6.png) — browser showing Mongo Express interface (full URL visible in address bar)
 
 ---
 
@@ -212,7 +210,7 @@ ADD SCREENSHOT HERE — browser showing Mongo Express interface (full URL visibl
 3. Fill in employee name, position, and level
 4. Submit and confirm the record appears in the list
 
-ADD SCREENSHOT HERE — web interface showing a newly created employee record
+![new entry](https://raw.githubusercontent.com/Secure-Dev-Ops-Group-7/mern-app-containerised/main/images/Screenshot7.png) — web interface showing a newly created employee record
 
 ### Verify data via Mongo Express
 
@@ -220,11 +218,11 @@ ADD SCREENSHOT HERE — web interface showing a newly created employee record
 2. Navigate to the `employees` database
 3. Confirm the record added via the web interface appears here
 
-ADD SCREENSHOT HERE — Mongo Express showing the same employee record in the database
+![mongo record](https://raw.githubusercontent.com/Secure-Dev-Ops-Group-7/mern-app-containerised/main/images/Screenshot6.png) — Mongo Express showing the same employee record in the database
 
 ### Add a record via Mongo Express
 
 1. In Mongo Express, insert a new document into the `employees` collection
 2. Return to the web interface and confirm the new record appears
 
-ADD SCREENSHOT HERE — web interface showing the record added via Mongo Express
+![mongo web](https://raw.githubusercontent.com/Secure-Dev-Ops-Group-7/mern-app-containerised/main/images/Screenshot10.png) — web interface showing the record added via Mongo Express
