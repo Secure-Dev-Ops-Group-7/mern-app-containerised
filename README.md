@@ -1,106 +1,230 @@
-# Basic MERN App
+# MERN App — Containerised
 
-![my picture](https://doananhtingithub40102.github.io/MyData/mern/mypicture.png)
+![Title Image](https://raw.githubusercontent.com/Secure-Dev-Ops-Group-7/mern-app-containerised/main/images/Screenshot3.png)
 
-A full-stack [MERN](https://www.mongodb.com/mern-stack) application for managing information of employees.
+A full-stack MERN (MongoDB, Express, React, Node.js) employee management application, containerised using Docker, Docker Compose, and Kubernetes (Minikube).
 
-## About the project
+> **3016ICT Secure Development Operations — Group 7**  
+> Project 2: [doananhtingithub40102/mern-app](https://github.com/doananhtingithub40102/mern-app)
 
-This is a full-stack MERN application that manages the basic information of employees. The app uses an employee database from the MongoDB Atlas database and then display it using a React.
+---
+
+## Table of Contents
+
+- [Application Architecture](#application-architecture)
+- [Tech Stack](#tech-stack)
+- [Prerequisites](#prerequisites)
+- [Environment Setup](#environment-setup)
+- [Running with Docker Compose](#running-with-docker-compose)
+- [Running with Kubernetes (Minikube)](#running-with-kubernetes-minikube)
+- [Accessing the Application](#accessing-the-application)
+- [Testing](#testing)
+
+---
+
+## Application Architecture
+
+The application is split across five containers that communicate over a shared internal Docker network (`mern-network`):
+
+| Container     | Image            | Role                                      | Internal Port | Exposed Port |
+|---------------|------------------|-------------------------------------------|---------------|--------------|
+| `frontend`    | Custom (React)   | React UI served via development server    | 3000          | 3000         |
+| `backend`     | Custom (Node.js) | Express REST API                          | 5000          | 5000         |
+| `mongo`       | `mongo`          | MongoDB database                          | 27017         | —            |
+| `mongo-express` | `mongo-express` | Web UI for MongoDB                       | 8081          | 8081         |
+| `nginx`       | Custom (Nginx)   | Reverse proxy, terminates HTTPS           | 80, 443       | 80, 443      |
+
+The frontend communicates with the backend via Nginx (`/api` proxy pass). The backend connects to MongoDB using the `MONGO_URI` environment variable. Nginx handles all external traffic and terminates SSL.
+
+ADD SCREENSHOT HERE — architecture diagram showing container relationships
+
+---
 
 ## Tech Stack
 
-**Client:** React, Bootstrap
+**Frontend:** React, Bootstrap  
+**Backend:** Node.js, Express.js  
+**Database:** MongoDB  
+**Proxy:** Nginx (with self-signed SSL)  
+**Containerisation:** Docker, Docker Compose, Kubernetes (Minikube)
 
-**Server:** NodeJS, ExpressJS
+---
 
-**Database:** MongoDB
+## Prerequisites
 
-## Run Locally
+- Ubuntu EC2 instance (or equivalent)
+- Docker and Docker Compose v2
+- Git
+- OpenSSL (for SSL certificate generation)
+- Minikube and kubectl (for Kubernetes deployment only)
 
-Clone the project
-
-```bash
-  git clone https://github.com/doananhtingithub40102/mern-app.git
-```
-
-Go to the project directory
-
-```bash
-  cd mern-app
-```
-
-Create an Atlas URI connection parameter in `server/.env` with your Atlas URI:
-```
-ATLAS_URI="mongodb+srv://<username>:<password>@cluster0.6cgz2s1.mongodb.net/?retryWrites=true&w=majority"
-PORT=5000
-```
-
-Create an hostname on server enviroment variable in `client/.env` with your hostname on server:
-```
-REACT_APP_YOUR_HOSTNAME="http://localhost:5000"
-```
-
-Install dependencies
+Install Docker on Ubuntu:
 
 ```bash
-  cd server
-  npm install
+sudo apt update && sudo apt upgrade -y
+sudo apt install -y docker.io docker-compose-v2 git
+sudo systemctl enable --now docker
+sudo usermod -aG docker $USER
+newgrp docker
 ```
+
+---
+
+## Environment Setup
+
+### 1. Clone the repository
 
 ```bash
-  cd client
-  npm install
+git clone https://github.com/Secure-Dev-Ops-Group-7/mern-app-containerised.git
+cd mern-app-containerised
 ```
 
-Start the server
+### 2. Configure environment variables
+
+A `.env` file is included in the repository with the required variable names. Key variables:
+
+```env
+MONGO_URI=mongodb://mongo:27017/employees
+```
+
+> `MONGO_URI` was renamed from `ATLAS_URI` in the original source since MongoDB Atlas is not used — the database runs in a container.
+
+### 3. Generate SSL certificates
+
+Nginx requires SSL certificates to be present before starting. Generate self-signed certificates:
 
 ```bash
-  cd server
-  node server.js
+mkdir -p nginx/ssl
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+  -keyout nginx/ssl/nginx.key \
+  -out nginx/ssl/nginx.crt \
+  -subj "/CN=localhost"
 ```
-Start the Client
+
+---
+
+## Running with Docker Compose
+
+### Build and start all containers
 
 ```bash
-  cd client
-  npm start
+docker compose up --build
 ```
-  
 
-## Features in the project
+To run in the background:
 
-- The user can **create** the information of a employee, and managing it.
+```bash
+docker compose up --build -d
+```
 
-- **Displaying** the information of employees, including the name, position, and level of the employee.
+### Verify containers are running
 
-- Includes **Update** and **Delete** actions.
+```bash
+docker compose ps
+```
 
-## Learn More
+![My picture](https://raw.githubusercontent.com/Secure-Dev-Ops-Group-7/mern-app-containerised/main/images/Screenshot2.png) — terminal output of `docker compose ps` showing all 5 containers running
 
-**FrontEnd**
+### View logs
 
-* To learn React, check out the [React documentation](https://reactjs.org/).
+```bash
+docker compose logs -f
+```
 
-* You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+ADD SCREENSHOT HERE — log output showing containers started and MongoDB connected successfully
 
-* Get started with [Bootstrap](https://www.w3schools.com/bootstrap5/index.php), the world's most popular framework for building responsive, mobile-first websites.
+### Stop containers
 
-**BackEnd**
+```bash
+docker compose down
+```
 
-* [Node.js Tutorial](https://www.w3schools.com/nodejs/default.asp)
+---
 
-* [ExpressJS Tutorial](https://www.tutorialspoint.com/expressjs/index.htm)
+## Running with Kubernetes (Minikube)
 
-**Database**
+### 1. Set up Minikube
 
-* [MongoDB Tutorial](https://www.w3schools.com/mongodb/)
+```bash
+minikube start
+eval $(minikube docker-env)
+```
 
-* Follow the [Get Started with MongoDB Atlas](https://www.mongodb.com/docs/atlas/getting-started/) guide to create an Atlas cluter, connecting to it, and loading your data.
+### 2. Build images inside Minikube's Docker environment
 
-**Fullstack**
+```bash
+docker build -t frontend ./client
+docker build -t backend ./server
+docker build -t nginx-proxy ./nginx
+```
 
-* Learn all about the [MERN stack](https://www.mongodb.com/languages/mern-stack-tutorial) in this step-by-step guide on how to use it by developing a simple CRUD application from scratch.
+### 3. Apply Kubernetes manifests
 
-## Live app
+```bash
+kubectl apply -f k8s/
+```
 
-<a href="https://employee-manager-tindoan-xu3i.onrender.com/">Live fullstack MERN app</a>
+### 4. Verify pods and services
+
+```bash
+kubectl get pods
+kubectl get services
+```
+
+ADD SCREENSHOT HERE — terminal output of `kubectl get pods` showing all pods running
+
+### 5. Access the application
+
+```bash
+kubectl port-forward service/nginx-service 8443:443
+```
+
+Then open `https://localhost:8443` in a browser.
+
+ADD SCREENSHOT HERE — terminal showing port-forward command running
+
+---
+
+## Accessing the Application
+
+Once running (Docker Compose or Kubernetes), the application is accessible at:
+
+| Interface        | URL                                      |
+|------------------|------------------------------------------|
+| Web App (HTTPS)  | `https://<EC2-PUBLIC-IP>`               |
+| Web App (HTTP)   | `http://<EC2-PUBLIC-IP>` (redirects)    |
+| Mongo Express    | `http://<EC2-PUBLIC-IP>:8081`           |
+
+> Your browser will show a security warning for the self-signed certificate — this is expected. Proceed past it.
+
+ADD SCREENSHOT HERE — browser showing the React frontend loaded via HTTPS (full URL visible in address bar)
+
+ADD SCREENSHOT HERE — browser showing Mongo Express interface (full URL visible in address bar)
+
+---
+
+## Testing
+
+### Add a record via the Web Interface
+
+1. Open the app at `https://<EC2-PUBLIC-IP>`
+2. Click **Create Record**
+3. Fill in employee name, position, and level
+4. Submit and confirm the record appears in the list
+
+ADD SCREENSHOT HERE — web interface showing a newly created employee record
+
+### Verify data via Mongo Express
+
+1. Open `http://<EC2-PUBLIC-IP>:8081`
+2. Navigate to the `employees` database
+3. Confirm the record added via the web interface appears here
+
+ADD SCREENSHOT HERE — Mongo Express showing the same employee record in the database
+
+### Add a record via Mongo Express
+
+1. In Mongo Express, insert a new document into the `employees` collection
+2. Return to the web interface and confirm the new record appears
+
+ADD SCREENSHOT HERE — web interface showing the record added via Mongo Express
