@@ -169,7 +169,8 @@ kubectl get pods
 kubectl get services
 ```
 
-ADD SCREENSHOT HERE — terminal output of `kubectl get pods` showing all pods running
+![pods running](https://raw.githubusercontent.com/Secure-Dev-Ops-Group-7/mern-app-containerised/main/images/Screenshot11.png) 
+— terminal output of `kubectl get pods` showing all pods running
 
 ### 5. Access the application
 
