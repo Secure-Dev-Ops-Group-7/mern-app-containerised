@@ -180,8 +180,6 @@ kubectl port-forward service/nginx-service 8443:443
 
 Then open `https://localhost:8443` in a browser.
 
-ADD SCREENSHOT HERE — terminal showing port-forward command running
-
 ---
 
 ## Accessing the Application
