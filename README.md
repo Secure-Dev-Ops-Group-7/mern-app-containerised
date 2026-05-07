@@ -77,28 +77,6 @@ git clone https://github.com/Secure-Dev-Ops-Group-7/mern-app-containerised.git
 cd mern-app-containerised
 ```
 
-### 2. Configure environment variables
-
-A `.env` file is included in the repository with the required variable names. Key variables:
-
-```env
-MONGO_URI=mongodb://mongo:27017/employees
-```
-
-> `MONGO_URI` was renamed from `ATLAS_URI` in the original source since MongoDB Atlas is not used — the database runs in a container.
-
-### 3. Generate SSL certificates
-
-Nginx requires SSL certificates to be present before starting. Generate self-signed certificates:
-
-```bash
-mkdir -p nginx/ssl
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-  -keyout nginx/ssl/nginx.key \
-  -out nginx/ssl/nginx.crt \
-  -subj "/CN=localhost"
-```
-
 ---
 
 ## Running with Docker Compose
